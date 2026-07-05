@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gujranwala Tikka Shop | Authentic BBQ & Biryani</title>
+    
+    <!-- SEO -->
+    <meta name="description" content="Gujranwala Tikka Shop by Arsalan Khalid Basra. Authentic Pakistani BBQ, Secret Masalas, and Catering Services. Located in Rawalpindi.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Poppins', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif']
+                    },
+                    colors: {
+                        brand: {
+                            wood: '#1A0A00',
+                            charcoal: '#0D0500',
+                            fire: '#E63900',
+                            ember: '#FF7B00',
+                            gold: '#D4AF37',
+                            goldlight: '#F3E5AB'
+                        }
+                    },
+                    backgroundImage: {
+                        'wood-pattern': "linear-gradient(to right bottom, rgba(26, 10, 0, 0.95), rgba(13, 5, 0, 0.98)), url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2000')",
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0D0500;
+            color: #F3E5AB;
+            overflow-x: hidden;
+        }
+
+        /* Live Fire Embers Canvas */
+        #embers-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; mix-blend-mode: screen;
+        }
+
+        .view-hidden { display: none !important; }
+
+        /* Gold Foil & Fire Text Effects */
+        .gold-text {
+            background: linear-gradient(to bottom, #F3E5AB, #D4AF37, #996515);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 4px 15px rgba(212, 175, 55, 0.2);
+        }
+        
+        .fire-text {
+            background: linear-gradient(to top, #E63900, #FF7B00, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Traditional Frosted Glass */
+        .glass-traditional {
+            background: rgba(26, 10, 0, 0.65);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+        }
+
+        .card-hover { transition: all 0.4s ease; cursor: pointer; }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            border-color: rgba(212, 175, 55, 0.6);
+            box-shadow: 0 15px 40px rgba(230, 57, 0, 0.2);
+        }
+
+        /* Buttons */
+        .btn-fire {
+            background: linear-gradient(135deg, #E63900 0%, #FF7B00 100%);
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(230, 57, 0, 0.4);
+            border: none;
+        }
+        .btn-fire:hover {
+            background: linear-gradient(135deg, #FF7B00 0%, #FFD700 100%);
+            box-shadow: 0 6px 25px rgba(255, 123, 0, 0.6);
+            transform: scale(1.02);
+            color: #1A0A00;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0D0500; }
+        ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-wood-pattern bg-cover bg-fixed bg-center min-h-screen relative flex flex-col font-sans">
+
+    <!-- Fire Embers Particle System -->
+    <canvas id="embers-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-traditional transition-all duration-300 border-b border-brand-gold/20" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-24">
+                
+                <!-- Brand / Logo -->
+                <div class="flex items-center gap-4 cursor-pointer" onclick="navigateToHome()">
+                    <div class="w-14 h-14 rounded-full bg-black border-2 border-brand-gold overflow-hidden flex items-center justify-center shadow-[0_0_15px_rgba(212,175,55,0.4)]">
+                        <img src="YOUR_LOGO_IMAGE_NAME.jpg" alt="Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" class="w-full h-full object-cover">
+                        <i class="fa-solid fa-fire text-brand-ember text-xl hidden"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-serif font-black text-lg md:text-xl gold-text tracking-wider uppercase">Gujranwala Tikka Shop</span>
+                        <span class="text-[9px] tracking-[0.3em] text-brand-ember font-medium uppercase">Arsalan Khalid Basra</span>
+                    </div>
+                </div>
+                
+                <div class="hidden md:flex space-x-8 items-center" id="nav-links">
+                    <a href="#masalas" onclick="navigateToHome()" class="text-xs font-semibold uppercase tracking-widest text-brand-goldlight hover:text-brand-ember transition-colors">Secret Masalas</a>
+                    <a href="#catering" onclick="navigateToHome()" class="text-xs font-semibold uppercase tracking-widest text-brand-goldlight hover:text-brand-ember transition-colors">BBQ Catering</a>
+                </div>
+
+                <!-- Back Button (Hidden on Home) -->
+                <button id="nav-back-btn" onclick="navigateToHome()" class="hidden glass-traditional hover:bg-brand-wood text-brand-gold px-5 py-2.5 rounded-full text-xs font-bold tracking-widest uppercase transition-all items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Menu
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ================= HOME VIEW ================= -->
+    <div id="home-view" class="w-full transition-opacity duration-500 flex-grow">
+        
+        <!-- Hero Section -->
+        <section class="relative z-10 pt-36 pb-16 lg:pt-48 lg:pb-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                
+                <div class="text-center max-w-4xl mx-auto gs-reveal">
+                    <div class="inline-flex items-center gap-2 glass-traditional border-brand-ember/30 px-5 py-2 rounded-full mb-6">
+                        <i class="fa-solid fa-fire-flame-curved text-brand-ember animate-pulse"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-[0.25em] text-brand-gold">Rawalpindi's Finest</span>
+                    </div>
+
+                    <h1 class="text-5xl sm:text-7xl font-serif font-black tracking-tight mb-6 leading-tight text-white drop-shadow-2xl">
+                        The Taste of <br>
+                        <span class="gold-text">Tradition & Fire.</span>
+                    </h1>
+                    
+                    <p class="text-gray-300 text-sm sm:text-base mb-12 max-w-2xl mx-auto font-light leading-relaxed">
+                        Welcome to the legendary Dastarkhwan of <b>Arsalan Khalid Basra</b>. Experience authentic Gujranwala-style charcoal BBQ, rich Biryani, and book our premium live catering services for your events.
+                    </p>
+                </div>
+
+                <!-- TWO MAIN CATEGORIES BELOW HERO -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto gs-reveal mt-8">
+                    <!-- Category 1: Spices -->
+                    <a href="#masalas" class="glass-traditional p-6 rounded-3xl flex items-center gap-6 group hover:border-brand-gold/60 transition-all cursor-pointer">
+                        <div class="w-16 h-16 rounded-full bg-brand-wood border border-brand-gold/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-mortar-pestle text-2xl text-brand-gold"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-serif text-xl font-bold text-white mb-1">Secret Masalas & Spices</h3>
+                            <p class="text-xs text-gray-400 font-light">Bring the authentic Gujranwala taste to your home kitchen.</p>
+                        </div>
+                    </a>
+
+                    <!-- Category 2: Catering -->
+                    <a href="#catering" class="glass-traditional p-6 rounded-3xl flex items-center gap-6 group hover:border-brand-ember/60 transition-all cursor-pointer">
+                        <div class="w-16 h-16 rounded-full bg-brand-wood border border-brand-ember/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-fire-burner text-2xl text-brand-ember"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-serif text-xl font-bold text-white mb-1">Live BBQ & Catering</h3>
+                            <p class="text-xs text-gray-400 font-light">Full care live barbecue services for events and parties.</p>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Category 1: Masalas Shop Section -->
+        <section id="masalas" class="relative z-10 py-24 border-t border-brand-gold/10 bg-black/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16 gs-reveal">
+                    <span class="text-xs uppercase tracking-[0.25em] text-brand-ember font-bold block mb-2">Bring The Magic Home</span>
+                    <h2 class="text-4xl md:text-5xl font-serif font-black gold-text mb-4">Secret Masala Shop</h2>
+                    <p class="text-gray-400 text-sm max-w-2xl mx-auto font-light">
+                        For the first time, Arsalan Basra is releasing the exact, hand-ground spice blends used in our famous kitchen.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="masalas-grid">
+                    <!-- Masala Products Injected via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Category 2: Barbecue Items & Catering Services -->
+        <section id="catering" class="relative z-10 py-24 border-t border-brand-gold/10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16 gs-reveal">
+                    <span class="text-xs uppercase tracking-[0.25em] text-brand-ember font-bold block mb-2">For Your Special Events</span>
+                    <h2 class="text-4xl md:text-5xl font-serif font-black gold-text mb-4">Live BBQ & Catering</h2>
+                    <p class="text-gray-400 text-sm max-w-2xl mx-auto font-light">
+                        Let us handle the fire. From live Tikka stations to full carcass roasts, we provide complete BBQ setups for your events.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="catering-grid">
+                    <!-- Catering Products Injected via JS -->
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ================= FULL PRODUCT / CHECKOUT VIEW ================= -->
+    <div id="product-view" class="view-hidden w-full pt-32 pb-24 min-h-screen relative z-20">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <button onclick="navigateToHome()" class="glass-traditional hover:bg-brand-wood text-brand-gold px-5 py-2.5 rounded-full text-xs font-bold tracking-widest uppercase transition-all flex items-center gap-2 mb-8 w-max">
+                <i class="fa-solid fa-arrow-left"></i> Back to Menu
+            </button>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                
+                <!-- Left: High Res Image -->
+                <div class="glass-traditional p-4 rounded-3xl relative">
+                    <div class="absolute inset-0 bg-brand-fire/10 blur-2xl rounded-full pointer-events-none"></div>
+                    <img id="pv-img" src="" class="w-full h-[400px] object-cover rounded-2xl relative z-10 shadow-2xl border border-brand-gold/20">
+                </div>
+
+                <!-- Right: Details & Order -->
+                <div class="glass-traditional p-8 rounded-3xl">
+                    <span id="pv-category" class="text-[10px] uppercase tracking-[0.25em] text-brand-ember font-bold block mb-2">Category</span>
+                    <h1 id="pv-title" class="text-3xl font-serif font-black text-white mb-4 leading-tight">Product Title</h1>
+                    
+                    <div class="text-2xl font-bold gold-text mb-6 pb-6 border-b border-brand-gold/20" id="pv-price">Rs. 0</div>
+                    
+                    <p id="pv-desc" class="text-gray-300 text-sm leading-relaxed mb-8 font-light italic border-l-2 border-brand-gold pl-4">
+                        Elegant description goes here.
+                    </p>
+
+                    <form id="order-form" class="space-y-6">
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-brand-goldlight mb-2 font-semibold">Select Quantity</label>
+                            <div class="flex items-center gap-4 bg-brand-charcoal border border-brand-gold/30 rounded-xl p-2 w-max">
+                                <button type="button" onclick="updateQty(-1)" class="w-10 h-10 rounded-lg bg-brand-wood text-brand-gold hover:bg-brand-ember hover:text-white flex items-center justify-center transition-colors"><i class="fa-solid fa-minus"></i></button>
+                                <input type="number" id="pv-qty" value="1" min="1" readonly class="bg-transparent text-white font-bold text-center w-12 outline-none">
+                                <button type="button" onclick="updateQty(1)" class="w-10 h-10 rounded-lg bg-brand-wood text-brand-gold hover:bg-brand-ember hover:text-white flex items-center justify-center transition-colors"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="orderViaWhatsApp()" class="w-full btn-fire py-4 rounded-xl text-sm font-bold flex items-center justify-center gap-3 mt-4">
+                            <i class="fa-brands fa-whatsapp text-2xl"></i> Order via WhatsApp
+                        </button>
+                        
+                        <p class="text-[10px] text-gray-500 text-center uppercase tracking-widest mt-4">
+                            Orders are routed directly to Arsalan Bhai (0320-7171575)
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="relative z-10 border-t border-brand-gold/20 bg-brand-charcoal pt-16 pb-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+                <div>
+                    <h3 class="font-serif font-black text-2xl gold-text uppercase tracking-wider mb-4">Gujranwala Tikka Shop</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed font-light mb-4">
+                        The ultimate destination for charcoal-grilled Tikka, royal Biryani, and raw authentic spices.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-xs uppercase tracking-[0.2em] text-brand-gold font-bold mb-4">Visit Our Dastarkhwan</h4>
+                    <p class="text-sm text-gray-300 font-light mb-2"><i class="fa-solid fa-location-dot text-brand-ember w-5"></i> Rawalpindi, Pakistan</p>
+                    <p class="text-sm text-gray-300 font-light mb-2"><i class="fa-solid fa-clock text-brand-ember w-5"></i> 12:00 PM - 2:00 AM</p>
+                </div>
+                <div>
+                    <h4 class="text-xs uppercase tracking-[0.2em] text-brand-gold font-bold mb-4">Owner Contact</h4>
+                    <p class="text-lg font-bold text-white mb-1">Arsalan Khalid Basra</p>
+                    <p class="text-sm text-gray-300 font-light"><i class="fa-solid fa-phone text-brand-ember w-5"></i> 0320 7171575</p>
+                </div>
+            </div>
+            <div class="border-t border-brand-gold/10 pt-6 text-center text-[10px] text-gray-500 uppercase tracking-widest">
+                © 2026 Gujranwala Tikka Shop by Arsalan Khalid Basra. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // --- 1. Product Database ---
+        const products = [
+            // Masalas
+            {
+                id: 'masala-tikka',
+                type: 'masala',
+                title: 'Gujranwala Special Tikka Masala',
+                category: 'Secret Spice Blend',
+                price: 'Rs. 450',
+                img: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=800',
+                desc: 'An elegant, fierce blend of roasted cumin, dried red chilies, and secret natural meat tenderizers. Ground by hand in our kitchens to ensure your home BBQ carries the exact smoky aroma of the Gujranwala Tikka Shop.'
+            },
+            {
+                id: 'masala-biryani',
+                type: 'masala',
+                title: 'Shahi Dum Biryani Masala',
+                category: 'Secret Spice Blend',
+                price: 'Rs. 550',
+                img: 'https://images.unsplash.com/photo-1532336414038-cb15d5069a53?auto=format&fit=crop&q=80&w=800',
+                desc: 'A royal concoction infused with real saffron strands, fragrant green cardamom, and star anise. Designed to recreate the majestic aroma of our copper-pot biryani right in your own dining room.'
+            },
+            {
+                id: 'masala-seekh',
+                type: 'masala',
+                title: 'Seekh Kebab Magic Blend',
+                category: 'Secret Spice Blend',
+                price: 'Rs. 400',
+                img: 'https://images.unsplash.com/photo-1615486171448-4fd1ff44eb2c?auto=format&fit=crop&q=80&w=800',
+                desc: 'A robust, binding mix of spices ensuring your minced meat kebabs hold together perfectly on the skewer while delivering a deep, smoky, and richly spiced punch.'
+            },
+            // Catering
+            {
+                id: 'cater-10kg',
+                type: 'catering',
+                title: 'Live BBQ Catering (10 Kg Package)',
+                category: 'Barbecue Service',
+                price: 'Rs. 18,500',
+                img: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&q=80&w=800',
+                desc: 'Experience our "Full Care 10 Kgs" catering package. Arsalan Bhai’s team will set up a glowing charcoal pit at your venue, serving live, sizzling hot chicken and beef tikkas directly to your guests.'
+            },
+            {
+                id: 'cater-lamb',
+                type: 'catering',
+                title: 'Whole Mutton Roast (Chargha Style)',
+                category: 'Premium Banquet Service',
+                price: 'Rs. 35,000',
+                img: 'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?auto=format&fit=crop&q=80&w=800',
+                desc: 'The ultimate centerpiece for weddings and grand feasts. A whole premium mutton lamb, marinated for 24 hours in our secret spices, and slow-roasted over wood embers until perfectly tender.'
+            }
+        ];
+
+        let currentProduct = null;
+
+        // --- 2. Render Products into Grids ---
+        function renderProducts() {
+            const masalasGrid = document.getElementById('masalas-grid');
+            const cateringGrid = document.getElementById('catering-grid');
+            
+            masalasGrid.innerHTML = '';
+            cateringGrid.innerHTML = '';
+
+            products.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'glass-traditional p-6 rounded-3xl card-hover group flex flex-col h-full';
+                card.onclick = () => openProduct(p.id);
+                
+                card.innerHTML = `
+                    <div class="aspect-square rounded-2xl overflow-hidden mb-6 relative border border-brand-gold/20">
+                        <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span class="btn-fire text-[10px] px-5 py-2.5 rounded-full uppercase tracking-widest shadow-2xl">View Details</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col flex-grow">
+                        <span class="text-[9px] uppercase tracking-[0.25em] text-brand-ember font-bold block mb-1">${p.category}</span>
+                        <h3 class="font-serif font-bold text-xl text-white mb-2 leading-snug">${p.title}</h3>
+                        <div class="mt-auto pt-4 border-t border-brand-gold/20 flex items-center justify-between">
+                            <span class="text-lg font-bold gold-text">${p.price}</span>
+                            <span class="text-[10px] uppercase tracking-widest text-gray-400 group-hover:text-white transition-colors">Select <i class="fa-solid fa-arrow-right ml-1"></i></span>
+                        </div>
+                    </div>
+                `;
+
+                if (p.type === 'masala') {
+                    masalasGrid.appendChild(card);
+                } else if (p.type === 'catering') {
+                    // Make catering cards wide on desktop
+                    card.classList.remove('aspect-square');
+                    cateringGrid.appendChild(card);
+                }
+            });
+        }
+
+        // --- 3. SPA Navigation Logic ---
+        function openProduct(pid) {
+            const prod = products.find(p => p.id === pid);
+            if(!prod) return;
+            currentProduct = prod;
+
+            // Populate Product Page
+            document.getElementById('pv-title').textContent = prod.title;
+            document.getElementById('pv-category').textContent = prod.category;
+            document.getElementById('pv-price').textContent = prod.price;
+            document.getElementById('pv-desc').textContent = prod.desc;
+            document.getElementById('pv-img').src = prod.img;
+            document.getElementById('pv-qty').value = 1; // Reset qty
+
+            // Toggle Views
+            document.getElementById('home-view').classList.add('view-hidden');
+            document.getElementById('nav-links').classList.add('hidden');
+            
+            document.getElementById('product-view').classList.remove('view-hidden');
+            document.getElementById('nav-back-btn').classList.remove('hidden');
+            document.getElementById('nav-back-btn').classList.add('flex');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function navigateToHome() {
+            document.getElementById('product-view').classList.add('view-hidden');
+            document.getElementById('nav-back-btn').classList.add('hidden');
+            document.getElementById('nav-back-btn').classList.remove('flex');
+            
+            document.getElementById('home-view').classList.remove('view-hidden');
+            document.getElementById('nav-links').classList.remove('hidden');
+            document.getElementById('nav-links').classList.add('md:flex');
+            
+            currentProduct = null;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- 4. Product Quantity & WhatsApp Checkout ---
+        function updateQty(change) {
+            const input = document.getElementById('pv-qty');
+            let val = parseInt(input.value) + change;
+            if(val < 1) val = 1;
+            input.value = val;
+        }
+
+        function orderViaWhatsApp() {
+            if(!currentProduct) return;
+            
+            const qty = document.getElementById('pv-qty').value;
+            // Target WhatsApp Number
+            const whatsappNumber = "923207171575"; 
+            
+            // Elegant Pre-filled Message
+            const message = `*Gujranwala Tikka Shop Inquiry*\n\nHello Arsalan Bhai, I would like to order:\n\n*Item:* ${currentProduct.title}\n*Quantity:* ${qty}\n*Price:* ${currentProduct.price}\n\nPlease share the details with me!`;
+            const encodedMessage = encodeURIComponent(message);
+            
+            window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
+        }
+
+        // --- 5. Init & Effects ---
+        window.onload = () => {
+            renderProducts();
+            
+            gsap.registerPlugin(ScrollTrigger);
+            gsap.utils.toArray('.gs-reveal').forEach(function(elem) {
+                gsap.from(elem, {
+                    scrollTrigger: { trigger: elem, start: "top 85%", toggleActions: "play none none none" },
+                    y: 30, autoAlpha: 0, duration: 0.8, ease: "power2.out"
+                });
+            });
+
+            initFireEmbers();
+        };
+
+        // --- Fire Embers Canvas Engine ---
+        function initFireEmbers() {
+            const canvas = document.getElementById('embers-canvas');
+            const ctx = canvas.getContext('2d');
+            let width, height;
+            let particles = [];
+
+            function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+            window.addEventListener('resize', resize);
+            resize();
+
+            class Particle {
+                constructor() { this.reset(); this.y = Math.random() * height; }
+                reset() {
+                    this.x = Math.random() * width;
+                    this.y = height + 10;
+                    this.size = Math.random() * 2.5 + 0.5;
+                    this.speedX = Math.random() * 1.5 - 0.75;
+                    this.speedY = Math.random() * -2 - 0.5;
+                    const colors = ['#FFD700', '#FF7B00', '#E63900'];
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.opacity = Math.random() * 0.8 + 0.2;
+                }
+                update() {
+                    this.x += this.speedX + (Math.sin(this.y * 0.01) * 0.5); 
+                    this.y += this.speedY;
+                    this.opacity -= 0.002; 
+                    this.size -= 0.005;     
+                    if (this.opacity <= 0 || this.size <= 0) this.reset();
+                }
+                draw() {
+                    ctx.save();
+                    ctx.globalAlpha = this.opacity;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.shadowBlur = 8;
+                    ctx.shadowColor = this.color;
+                    ctx.fill();
+                    ctx.restore();
+                }
+            }
+
+            const particleCount = window.innerWidth < 768 ? 35 : 75;
+            for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                    particles[i].draw();
+                }
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+    </script>
+</body>
+</html>
